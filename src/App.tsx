@@ -2,6 +2,7 @@ import "@cloudscape-design/global-styles/index.css";
 import IdiomasRoutes from "./routes/idiomas";
 import AdmisionRoutes from "./routes/admision";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { NotificationProvider } from "./providers/notificationProvider";
 
 const baseRouter = createBrowserRouter([
   {
@@ -19,5 +20,9 @@ const baseRouter = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={baseRouter} />;
+  return (
+    <NotificationProvider>
+      <RouterProvider router={baseRouter} />
+    </NotificationProvider>
+  );
 }

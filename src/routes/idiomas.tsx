@@ -6,8 +6,17 @@ const routes: RouteObject[] = [
     lazy: () => import("../pages/idiomas/index"),
   },
   {
-    path: "hi",
-    element: <>mom</>,
+    path: "admin",
+    children: [
+      {
+        path: "",
+        lazy: () => import("../pages/idiomas/admin/login/index"),
+      },
+      {
+        path: "cursos",
+        lazy: () => import("../pages/idiomas/admin/cursos/index"),
+      },
+    ],
   },
 ];
 
