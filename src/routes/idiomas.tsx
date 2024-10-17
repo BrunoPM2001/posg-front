@@ -26,6 +26,20 @@ const routes: RouteObject[] = [
       },
     ],
   },
+  {
+    path: "estudiante",
+    children: [
+      {
+        path: "matricula",
+        children: [
+          {
+            path: "",
+            lazy: () => import("../pages/idiomas/estudiantes/matricula/index"),
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export default routes;
