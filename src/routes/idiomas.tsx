@@ -16,6 +16,14 @@ const routes: RouteObject[] = [
         path: "cursos",
         lazy: () => import("../pages/idiomas/admin/cursos/index"),
       },
+      {
+        path: "docentes",
+        lazy: () => import("../pages/idiomas/admin/docentes/index"),
+      },
+      {
+        path: "matriculas",
+        lazy: () => import("../pages/idiomas/admin/matriculas/index"),
+      },
     ],
   },
 ];

@@ -17,7 +17,7 @@ export const NotificationProvider: FC<{ children: ReactElement }> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   //  Functions
-  const pushNotification = (message: string, type: string, scroll = true) => {
+  const pushNotification = (type: string, message: string, scroll = true) => {
     const id = notifications.length + 1;
     setNotifications((prev) => [
       ...prev,

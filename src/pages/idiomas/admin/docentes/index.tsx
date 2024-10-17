@@ -18,160 +18,100 @@ import axiosBase from "../../../../api/axios";
 import ModalAgregar from "./modalAgregar";
 import ModalEditar from "./modalEditar";
 import ModalEliminar from "./modalEliminar";
-import ModalInscritos from "./modalInscritos";
 
-interface Curso {
-  codigo: string;
-  idioma: string;
-  programa: string;
-  nivel: string;
-  hora_inicio: string;
-  hora_fin: string;
-  hora_descripcion: string;
-  mes: string;
-  modalidad: string;
-  seccion: string;
-  fecha_inicio: string;
-  fecha_fin: string;
+interface Docente {
+  dni: string;
+  paterno: string;
+  materno: string;
+  nombres: string;
+  celular: string;
+  correo: string;
   estado: string;
-  inscritos: number;
 }
 
 const stringOperators = [":", "!:", "=", "!=", "^", "!^"];
 
 const FILTER_PROPS: ReadonlyArray<PropertyFilterProps.FilteringProperty> = [
   {
-    key: "codigo",
-    propertyLabel: "Código",
-    groupValuesLabel: "Códigos",
+    key: "dni",
+    propertyLabel: "Dni",
+    groupValuesLabel: "N° de documentos",
     operators: stringOperators,
   },
   {
-    key: "idioma",
-    propertyLabel: "Idioma",
-    groupValuesLabel: "Idiomas",
+    key: "paterno",
+    propertyLabel: "Ap. Paterno",
+    groupValuesLabel: "Ap. Paternos",
     operators: stringOperators,
   },
   {
-    key: "programa",
-    propertyLabel: "Programa",
-    groupValuesLabel: "Programas",
+    key: "materno",
+    propertyLabel: "Ap. Materno",
+    groupValuesLabel: "Ap. Maternos",
     operators: stringOperators,
   },
   {
-    key: "nivel",
-    propertyLabel: "Nivel",
-    groupValuesLabel: "Niveles",
+    key: "nombres",
+    propertyLabel: "Nombres",
+    groupValuesLabel: "Nombres",
     operators: stringOperators,
   },
   {
-    key: "horario",
-    propertyLabel: "Horario",
-    groupValuesLabel: "Horarios",
+    key: "celular",
+    propertyLabel: "Celular",
+    groupValuesLabel: "Celulares",
     operators: stringOperators,
   },
   {
-    key: "horario",
-    propertyLabel: "Horario",
-    groupValuesLabel: "Horarios",
+    key: "correo",
+    propertyLabel: "Correo",
+    groupValuesLabel: "Correos",
     operators: stringOperators,
   },
   {
-    key: "horario_desc",
-    propertyLabel: "Descripción de horario",
-    groupValuesLabel: "Descripciones",
-    operators: stringOperators,
-  },
-  {
-    key: "modalidad",
-    propertyLabel: "Modalidad",
-    groupValuesLabel: "Modalidades",
-    operators: stringOperators,
-  },
-  {
-    key: "seccion",
-    propertyLabel: "Sección",
-    groupValuesLabel: "Secciones",
+    key: "estado",
+    propertyLabel: "Estado",
+    groupValuesLabel: "Estados",
     operators: stringOperators,
   },
 ];
 
-const columnDefinitions: ReadonlyArray<TableProps.ColumnDefinition<Curso>> = [
+const columnDefinitions: ReadonlyArray<TableProps.ColumnDefinition<Docente>> = [
   {
-    id: "codigo",
-    header: "Código",
-    cell: (item) => item.codigo,
+    id: "dni",
+    header: "Dni",
+    cell: (item) => item.dni,
   },
   {
-    id: "idioma",
-    header: "Idioma",
-    cell: (item) => item.idioma,
+    id: "paterno",
+    header: "Ap. paterno",
+    cell: (item) => item.paterno,
   },
   {
-    id: "programa",
-    header: "Programa",
-    cell: (item) => item.programa,
+    id: "materno",
+    header: "Materno",
+    cell: (item) => item.materno,
   },
   {
-    id: "nivel",
-    header: "Nivel",
-    cell: (item) => item.nivel,
+    id: "nombres",
+    header: "Nombres",
+    cell: (item) => item.nombres,
   },
   {
-    id: "horario",
-    header: "Horario",
-    cell: (item) => item.hora_inicio + " - " + item.hora_fin,
+    id: "celular",
+    header: "Celular",
+    cell: (item) => item.celular,
   },
   {
-    id: "horario_desc",
-    header: "Horario descripción",
-    cell: (item) => item.hora_descripcion,
-  },
-  {
-    id: "mes",
-    header: "Mes",
-    cell: (item) => item.mes.slice(0, 7),
-  },
-  {
-    id: "modalidad",
-    header: "Modalidad",
-    cell: (item) => item.modalidad,
-  },
-  {
-    id: "seccion",
-    header: "Sección",
-    cell: (item) => item.seccion,
-  },
-  {
-    id: "fecha_inicio",
-    header: "Fecha inicio",
-    cell: (item) => item.fecha_inicio,
-  },
-  {
-    id: "fecha_fin",
-    header: "Fecha fin",
-    cell: (item) => item.fecha_fin,
-  },
-  {
-    id: "inscritos",
-    header: "Inscritos",
-    cell: (item) => item.inscritos,
+    id: "correo",
+    header: "Correo",
+    cell: (item) => item.correo,
   },
   {
     id: "estado",
     header: "Estado",
     cell: (item) => (
-      <Badge
-        color={
-          item.estado === "Inhabilitado"
-            ? "grey"
-            : item.estado === "En matrícula"
-            ? "blue"
-            : item.estado === "En curso"
-            ? "green"
-            : "red"
-        }
-      >
+      <Badge color={item.estado == "Inactivo" ? "red" : "blue"}>
         {item.estado}
       </Badge>
     ),
@@ -179,25 +119,19 @@ const columnDefinitions: ReadonlyArray<TableProps.ColumnDefinition<Curso>> = [
 ];
 
 const columnDisplay: ReadonlyArray<TableProps.ColumnDisplayProperties> = [
-  { id: "codigo", visible: true },
-  { id: "idioma", visible: true },
-  { id: "programa", visible: true },
-  { id: "nivel", visible: true },
-  { id: "horario", visible: true },
-  { id: "horario_desc", visible: true },
-  { id: "mes", visible: true },
-  { id: "modalidad", visible: true },
-  { id: "seccion", visible: true },
-  { id: "fecha_inicio", visible: true },
-  { id: "fecha_fin", visible: true },
-  { id: "inscritos", visible: true },
+  { id: "dni", visible: true },
+  { id: "paterno", visible: true },
+  { id: "materno", visible: true },
+  { id: "nombres", visible: true },
+  { id: "celular", visible: true },
+  { id: "correo", visible: true },
   { id: "estado", visible: true },
 ];
 
 export function Component() {
   //  States
   const [loading, setLoading] = useState(true);
-  const [distributions, setDistribution] = useState<Curso[]>([]);
+  const [distributions, setDistribution] = useState<Docente[]>([]);
   const [modal, setModal] = useState("");
 
   //  Hooks
@@ -233,7 +167,7 @@ export function Component() {
 
   const getData: any = async () => {
     setLoading(true);
-    const res = await axiosBase.get("idiomas/admin/cursos/cursos");
+    const res = await axiosBase.get("idiomas/admin/docentes/docentes");
     const data = res.data;
     setDistribution(data);
     setLoading(false);
@@ -246,7 +180,7 @@ export function Component() {
 
   return (
     <BaseLayout
-      header="Gestión de cursos"
+      header="Gestión de docentes"
       contentType="table"
       breadcrumbs={[
         {
@@ -254,14 +188,14 @@ export function Component() {
           href: "#",
         },
         {
-          text: "Gestión de cursos",
+          text: "Gestión de docentes",
           href: "#",
         },
       ]}
     >
       <Table
         {...collectionProps}
-        trackBy="codigo"
+        trackBy="dni"
         items={items}
         loading={loading}
         loadingText="Cargando datos"
@@ -270,6 +204,7 @@ export function Component() {
         selectionType="single"
         enableKeyboardNavigation
         onRowClick={({ detail }) => actions.setSelectedItems([detail.item])}
+        wrapLines
         header={
           <Header
             counter={"(" + distributions.length + ")"}
@@ -286,21 +221,9 @@ export function Component() {
                       id: "action2",
                       text: "Eliminar",
                     },
-                    {
-                      id: "action3",
-                      text: "Ver inscritos",
-                    },
                   ]}
                   onItemClick={({ detail }) => {
-                    setModal(
-                      detail.id === "action1"
-                        ? "editar"
-                        : detail.id === "action2"
-                        ? "eliminar"
-                        : detail.id === "action3"
-                        ? "inscritos"
-                        : ""
-                    );
+                    setModal(detail.id === "action1" ? "editar" : "eliminar");
                   }}
                 >
                   Acciones
@@ -311,13 +234,13 @@ export function Component() {
               </SpaceBetween>
             }
           >
-            Listado de cursos
+            Listado de docentes
           </Header>
         }
         filter={
           <PropertyFilter
             {...propertyFilterProps}
-            filteringPlaceholder="Buscar curso"
+            filteringPlaceholder="Buscar docente"
             countText={`${filteredItemsCount} coincidencias`}
             expandToViewport
             virtualScroll
@@ -338,19 +261,14 @@ export function Component() {
         ) : modal === "editar" ? (
           <ModalEditar
             close={() => setModal("")}
-            codigo={collectionProps.selectedItems[0].codigo}
+            dni={collectionProps.selectedItems[0].dni}
             reload={getData}
-          />
-        ) : modal === "inscritos" ? (
-          <ModalInscritos
-            close={() => setModal("")}
-            codigo={collectionProps.selectedItems[0].codigo}
           />
         ) : (
           modal === "eliminar" && (
             <ModalEliminar
               close={() => setModal("")}
-              codigo={collectionProps.selectedItems[0].codigo}
+              dni={collectionProps.selectedItems[0].dni}
               reload={getData}
             />
           )

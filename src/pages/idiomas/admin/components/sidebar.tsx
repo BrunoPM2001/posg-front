@@ -8,17 +8,22 @@ const items: ReadonlyArray<SideNavigationProps.Item> = [
   {
     type: "link",
     text: "Gestión de cursos",
-    href: "#",
+    href: "/idiomas/admin/cursos",
+  },
+  {
+    type: "link",
+    text: "Gestión de docentes",
+    href: "/idiomas/admin/docentes",
   },
   {
     type: "link",
     text: "Gestión de matrículas",
-    href: "#",
+    href: "/idiomas/admin/matriculas",
   },
   {
     type: "link",
     text: "Gestión de exámenes de suficiencia",
-    href: "#",
+    href: "/idiomas/admin/examenes",
   },
   {
     type: "link",
@@ -36,7 +41,7 @@ export default function Sidebar() {
         text: "Administrador",
         href: "/idiomas/admin",
       }}
-      activeHref={"/admin" + location.pathname}
+      activeHref={location.pathname}
       items={items}
     />
   );
