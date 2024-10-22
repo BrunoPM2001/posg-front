@@ -15,9 +15,10 @@ import {
   SpaceBetween,
 } from "@cloudscape-design/components";
 import BaseLayout from "../components/baseLayout";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NotificationContext from "../../../../providers/notificationProvider";
 import useFormValidation from "../../../../hooks/useFormValidation";
+import axiosBase from "../../../../api/axios";
 
 interface FormValues {
   curso: SelectProps.Option | null;
@@ -88,6 +89,23 @@ export function Component() {
   const { formValues, formErrors, handleChange, validateForm } =
     useFormValidation<FormValues>(initialForm, formRules);
 
+  //  Functions
+  const getData = async () => {
+    const res = await axiosBase.get("idiomas/estudiante/matricula/cursos");
+    const data = res.data;
+    setCursos(data);
+  };
+
+  const submit = async () => {
+    if (validateForm()) {
+      console.info("Ok");
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <BaseLayout
       header={
@@ -116,7 +134,7 @@ export function Component() {
     >
       <Form
         actions={
-          <Button variant="primary" onClick={() => {}}>
+          <Button variant="primary" onClick={submit}>
             Solicitar mi matrícula
           </Button>
         }
@@ -145,6 +163,8 @@ export function Component() {
                   options={cursos}
                   statusType={cursos?.length === 0 ? "loading" : "finished"}
                   loadingText="Cargando opciones"
+                  filteringType="auto"
+                  virtualScroll
                 />
               </FormField>
               <FormField
