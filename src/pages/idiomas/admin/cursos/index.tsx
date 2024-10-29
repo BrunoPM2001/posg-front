@@ -160,6 +160,7 @@ const columnDefinitions: ReadonlyArray<TableProps.ColumnDefinition<Curso>> = [
   {
     id: "estado",
     header: "Estado",
+    minWidth: 130,
     cell: (item) => (
       <Badge
         color={

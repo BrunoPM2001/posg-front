@@ -43,7 +43,7 @@ interface FormValues {
   fecha_inicio: string;
   fecha_fin: string;
   estado: SelectProps.Option | null;
-  docente: SelectProps.Option | null;
+  docente_dni: string;
 }
 
 const initialForm: FormValues = {
@@ -58,7 +58,7 @@ const initialForm: FormValues = {
   fecha_inicio: "",
   fecha_fin: "",
   estado: null,
-  docente: null,
+  docente_dni: "",
 };
 
 const formRules = {
@@ -161,7 +161,10 @@ export default function ({ close, codigo, reload }: ModalProps) {
     handleChange("fecha_fin", data.curso.fecha_fin);
     handleChange("mes", data.curso.mes);
     handleChange("codigo", data.curso.codigo);
-    handleChange("docente", data.curso.docente);
+    if (data.curso.docente_dni) {
+      handleChange("docente_dni", data.curso.docente_dni);
+      setValue(data.curso.docente_dni);
+    }
   };
 
   const submit = async () => {
@@ -178,7 +181,7 @@ export default function ({ close, codigo, reload }: ModalProps) {
         fecha_fin: formValues.fecha_fin,
         mes: formValues.mes,
         estado: formValues.estado?.value,
-        docente_dni: formValues.docente?.value,
+        docente_dni: formValues.docente_dni,
       });
       const data = res.data;
       pushNotification(data.state, data.message);
@@ -360,10 +363,13 @@ export default function ({ close, codigo, reload }: ModalProps) {
               options={estados}
             />
           </FormField>
-          <FormField label="Docente" errorText={formErrors.docente} stretch>
+          <FormField label="Docente" errorText={formErrors.docente_dni} stretch>
             <Autosuggest
               value={value}
               onChange={({ detail }) => setValue(detail.value)}
+              onSelect={({ detail }) =>
+                handleChange("docente_dni", detail.selectedOption?.value)
+              }
               options={detalles.docentes}
               placeholder="Buscar docente"
               statusType={

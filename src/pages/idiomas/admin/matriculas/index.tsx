@@ -92,6 +92,7 @@ const columnDefinitions: ReadonlyArray<TableProps.ColumnDefinition<Matricula>> =
     {
       id: "estado",
       header: "Estado",
+      minWidth: 130,
       cell: (item) => (
         <Badge
           color={

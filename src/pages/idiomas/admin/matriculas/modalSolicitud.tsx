@@ -3,6 +3,7 @@ import {
   Button,
   ColumnLayout,
   FormField,
+  Grid,
   Input,
   Modal,
   Select,
@@ -10,7 +11,7 @@ import {
   SpaceBetween,
 } from "@cloudscape-design/components";
 import useFormValidation from "../../../../hooks/useFormValidation";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import axiosBase from "../../../../api/axios";
 import NotificationContext from "../../../../providers/notificationProvider";
 
@@ -30,76 +31,28 @@ interface FormValues {
   estado: SelectProps.Option;
 }
 
-const initialForm: FormValues = {
-  dni: "",
-  paterno: "",
-  materno: "",
-  nombres: "",
-  celular: "",
-  correo: "",
-  estado: { value: "1", label: "Activo" },
-};
-
-const formRules = {
-  dni: { required: true },
-  paterno: { required: true },
-  materno: { required: true },
-  nombres: { required: true },
-  celular: { required: true },
-  correo: { required: true },
-  estado: { required: true },
-};
-
-const estados: SelectProps.Options = [
-  { value: "0", label: "Inactivo" },
-  { value: "1", label: "Activo" },
-];
-
 export default function ({ close, matricula_id, reload }: ModalProps) {
   //  Notifications
   const { pushNotification } = useContext(NotificationContext);
 
   //  Formulario
-  const { formValues, formErrors, handleChange, validateForm } =
-    useFormValidation<FormValues>(initialForm, formRules);
+  const [detalles, setDetalles] = useState({});
 
   //  Functions
   const getData = async () => {
-    const res = await axiosBase.get("idiomas/admin/matriculas/solicitud", {
-      params: {
-        matricula_id,
-      },
-    });
-    const data = res.data;
-    handleChange("dni", data.docente.dni);
-    handleChange("paterno", data.docente.paterno);
-    handleChange("materno", data.docente.materno);
-    handleChange("nombres", data.docente.nombres);
-    handleChange("celular", data.docente.celular);
-    handleChange("correo", data.docente.correo);
-    handleChange(
-      "estado",
-      estados.find((opt) => opt.label == data.docente.estado)
+    const res = await axiosBase.get(
+      "idiomas/admin/matriculas/detalleMatricula",
+      {
+        params: {
+          matricula_id,
+        },
+      }
     );
+    const data = res.data;
+    setDetalles(data);
   };
 
-  const submit = async () => {
-    if (validateForm()) {
-      const res = await axiosBase.put("idiomas/admin/docentes/editar", {
-        dni: formValues.dni,
-        paterno: formValues.paterno,
-        materno: formValues.materno,
-        nombres: formValues.nombres,
-        celular: formValues.celular,
-        correo: formValues.correo,
-        estado: formValues.estado.value,
-      });
-      const data = res.data;
-      pushNotification(data.state, data.message);
-      reload();
-      close();
-    }
-  };
+  const submit = async () => {};
 
   useEffect(() => {
     getData();
@@ -110,93 +63,77 @@ export default function ({ close, matricula_id, reload }: ModalProps) {
       visible
       size="large"
       onDismiss={close}
-      header="Actualizar docente"
+      header="Información personal"
       footer={
-        <div>
-          <Box float="left">
-            <Button variant="normal" iconName="refresh" onClick={close}>
-              Reestablecer contraseña
+        <Box float="right">
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button variant="normal" onClick={close}>
+              Rechazar solicitud
             </Button>
-          </Box>
-          <Box float="right">
-            <SpaceBetween direction="horizontal" size="xs">
-              <Button variant="normal" onClick={close}>
-                Cancelar
-              </Button>
-              <Button variant="primary" onClick={submit}>
-                Guardar información
-              </Button>
-            </SpaceBetween>
-          </Box>
-        </div>
+            <Button variant="primary" onClick={submit}>
+              Aprobar matrícula
+            </Button>
+          </SpaceBetween>
+        </Box>
       }
     >
       <SpaceBetween size="s">
-        <ColumnLayout columns={3}>
-          <FormField label="N° de dni" errorText={formErrors.dni} stretch>
-            <Input
-              placeholder="N° de documento"
-              value={formValues.dni}
-              readOnly
-            />
-          </FormField>
-          <FormField
-            label="Apellido paterno"
-            errorText={formErrors.paterno}
-            stretch
-          >
-            <Input
-              placeholder="Primer apellido"
-              value={formValues.paterno}
-              onChange={({ detail }) => handleChange("paterno", detail.value)}
-            />
-          </FormField>
-          <FormField
-            label="Apellido materno"
-            errorText={formErrors.materno}
-            stretch
-          >
-            <Input
-              placeholder="Segundo apellido"
-              value={formValues.materno}
-              onChange={({ detail }) => handleChange("materno", detail.value)}
-            />
-          </FormField>
-        </ColumnLayout>
-        <FormField label="Nombres" errorText={formErrors.nombres} stretch>
-          <Input
-            placeholder="Nombres del docente"
-            value={formValues.nombres}
-            onChange={({ detail }) => handleChange("nombres", detail.value)}
-          />
+        <FormField label="Nombres" stretch>
+          <Input value={detalles.matricula.nombres} readOnly />
         </FormField>
-        <ColumnLayout columns={3}>
-          <FormField
-            label="N° de celular"
-            errorText={formErrors.celular}
-            stretch
-          >
-            <Input
-              value={formValues.celular}
-              onChange={({ detail }) => handleChange("celular", detail.value)}
-            />
+        <Grid
+          gridDefinition={[
+            { colspan: { default: 12, xs: 4 } },
+            { colspan: { default: 12, xs: 4 } },
+            { colspan: { default: 12, xs: 4 } },
+          ]}
+        >
+          <FormField label="N° de documento" stretch>
+            <Input value={formValues.dni} readOnly />
           </FormField>
-          <FormField label="Correo" errorText={formErrors.correo} stretch>
-            <Input
-              value={formValues.correo}
-              onChange={({ detail }) => handleChange("correo", detail.value)}
-            />
+          <FormField label="Correo" stretch>
+            <Input value={formValues.correo} readOnly />
           </FormField>
-          <FormField label="Estado" errorText={formErrors.estado} stretch>
-            <Select
-              selectedOption={formValues.estado}
-              onChange={({ detail }) =>
-                handleChange("estado", detail.selectedOption)
-              }
-              options={estados}
-            />
+          <FormField label="Celular" stretch>
+            <Input value={formValues.celular} readOnly />
           </FormField>
-        </ColumnLayout>
+        </Grid>
+        <Box variant="h2">Información de la solicitud</Box>
+        <Grid
+          gridDefinition={[
+            { colspan: { default: 12, xxs: 6 } },
+            { colspan: { default: 12, xxs: 6 } },
+            { colspan: { default: 12, xs: 3, xxs: 6 } },
+            { colspan: { default: 12, xs: 3, xxs: 6 } },
+            { colspan: { default: 12, xs: 3, xxs: 6 } },
+            { colspan: { default: 12, xs: 3, xxs: 6 } },
+          ]}
+        >
+          <div>
+            <Box variant="awsui-key-label">Código de curso</Box>
+            <div>{formValues.dni}</div>
+          </div>
+          <div>
+            <Box variant="awsui-key-label">Detalles del curso</Box>
+            <div>{formValues.dni}</div>
+          </div>
+          <div>
+            <Box variant="awsui-key-label">Banco</Box>
+            <div>{formValues.dni}</div>
+          </div>
+          <div>
+            <Box variant="awsui-key-label">N° de operación</Box>
+            <div>{formValues.dni}</div>
+          </div>
+          <div>
+            <Box variant="awsui-key-label">Monto</Box>
+            <div>{formValues.dni}</div>
+          </div>
+          <div>
+            <Box variant="awsui-key-label">Fecha</Box>
+            <div>{formValues.dni}</div>
+          </div>
+        </Grid>
       </SpaceBetween>
     </Modal>
   );

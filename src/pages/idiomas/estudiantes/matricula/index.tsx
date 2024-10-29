@@ -84,6 +84,7 @@ export function Component() {
 
   //  States
   const [cursos, setCursos] = useState<SelectProps.Options>([]);
+  const [disabled, setDisabled] = useState(false);
 
   //  Formulario
   const { formValues, formErrors, handleChange, validateForm } =
@@ -98,7 +99,20 @@ export function Component() {
 
   const submit = async () => {
     if (validateForm()) {
-      console.info("Ok");
+      setDisabled(true);
+      const form = new FormData();
+      form.append("curso_codigo", formValues.curso?.value as string);
+      form.append("banco", formValues.banco);
+      form.append("pago", formValues.pago);
+      form.append("monto", formValues.monto);
+      form.append("fecha", formValues.fecha);
+      form.append("file", formValues.file[0]);
+      const res = await axiosBase.post(
+        "idiomas/estudiante/matricula/realizar",
+        form
+      );
+      const data = res.data;
+      pushNotification(data.state, data.message, true);
     }
   };
 
@@ -134,7 +148,7 @@ export function Component() {
     >
       <Form
         actions={
-          <Button variant="primary" onClick={submit}>
+          <Button variant="primary" onClick={submit} disabled={disabled}>
             Solicitar mi matrícula
           </Button>
         }
